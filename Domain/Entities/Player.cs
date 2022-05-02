@@ -8,7 +8,7 @@ namespace Domain.Entities
 {
     public class Player
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string displayName { get; set; }
     }
 }

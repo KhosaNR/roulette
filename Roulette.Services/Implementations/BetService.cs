@@ -22,22 +22,22 @@ namespace Roulette.Services.Implementations
             _betRepository.AddBet(bet);
         }
 
-        public void DeleteBet(Guid BetId)
+        public void DeleteBet(string BetId)
         {
             _betRepository.DeleteBet(BetId);
         }
 
-        public Task<IEnumerable<Bet>> GetAllBetsBySessionId(Guid SessionId)
+        public Task<IEnumerable<Bet>> GetActiveBetsBySessionId(string sessionId)
         {
-            return _betRepository.GetAllBetsBySessionId(SessionId);
+            return _betRepository.GetActiveBetsBySessionId(sessionId);
         }
 
-        public Task<Bet> GetBetById(Guid BetId)
+        public Task<Bet> GetBetById(string BetId)
         {
             return _betRepository.GetBetById(BetId);
         }
 
-        public Task<Bet> GetBetBySessionId(Guid SessionId)
+        public Task<Bet> GetBetBySessionId(string SessionId)
         {
             return _betRepository.GetBetBySessionId(SessionId);
         }

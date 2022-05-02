@@ -47,7 +47,7 @@ namespace Roulette.DataAccess.Dapper.Implementations
             }
         }
 
-        public void DeleteSession(Guid SessionId)
+        public void DeleteSession(string SessionId)
         {
 
             try
@@ -88,7 +88,25 @@ namespace Roulette.DataAccess.Dapper.Implementations
             {
                 using (IDbConnection dbConnection = Connection)
                 {
-                    return await dbConnection.QueryAsync<Session>("SELECT * FROM SESSION");
+                    //var query = "SELECT * FROM SESSION LEFT JOIN BET ON SESSION.ID = BET.SESSIONID";
+                    //return await dbConnection.QueryAsync<Session>("SELECT * FROM SESSION LEFT JOIN BET ON SESSION.ID = BET.SESSIONID");
+                    var lookup = new Dictionary<string, Session>();
+                    return await dbConnection.QueryAsync<Session, Bet, Session>(@"
+                                    SELECT s.*, b.*
+                                    FROM Session s
+                                    LEFT JOIN Bet b ON s.Id = b.SessionId                    
+                                    ", (s, b) => {
+                        Session session;
+                        if (!lookup.TryGetValue(s.Id, out session))
+                        {
+                            lookup.Add(s.Id, session = s);
+                        }
+                        if (session.bets == null)
+                            session.bets = new List<Bet>();
+                            session.bets.Add(b);
+                        return session;
+}
+                 );
                 }
 
             }
@@ -104,7 +122,24 @@ namespace Roulette.DataAccess.Dapper.Implementations
             {
                 using (IDbConnection dbConnection = Connection)
                 {
-                    return await dbConnection.QueryAsync<Session>("SELECT * FROM SESSION WHERE HASSPUN <> 0");
+                    var lookup = new Dictionary<string, Session>();
+                    return await dbConnection.QueryAsync<Session, Bet, Session>(@"
+                                    SELECT s.*, b.*
+                                    FROM Session s
+                                    LEFT JOIN Bet b ON s.Id = b.SessionId                    
+                                    WHERE hasSpun <> 0
+                                    ", (s, b) => {
+                        Session session;
+                        if (!lookup.TryGetValue(s.Id, out session))
+                        {
+                            lookup.Add(s.Id, session = s);
+                        }
+                        if (session.bets == null)
+                            session.bets = new List<Bet>();
+                        session.bets.Add(b);
+                        return session;
+                    }
+                 );
                 }
 
             }
@@ -114,13 +149,13 @@ namespace Roulette.DataAccess.Dapper.Implementations
             }
         }
 
-        public async Task<Session> GetSessionByID(Guid SessionId)
+        public async Task<Session> GetSessionByID(string SessionId)
         {
             try
             {
                 using (IDbConnection dbConnection = Connection)
                 {
-                    return await dbConnection.QueryFirstAsync<Session>($"SELECT * FROM SESSION WHERE ID = '{SessionId.ToString("N")}'");
+                    return await dbConnection.QueryFirstAsync<Session>($"SELECT * FROM SESSION WHERE ID = '{SessionId}'");
                 }
 
             }
@@ -148,6 +183,42 @@ namespace Roulette.DataAccess.Dapper.Implementations
                 throw new Exception(ex.Message);
             }
 
+        }
+        public void AddBet(Bet bet)
+        {
+
+            try
+            {
+                using (IDbConnection dbConnection = Connection)
+                {
+                    var query = "INSERT INTO BET " +
+                        "(ID, BETTYPEID, NUMBERS, BETAMOUNT, SESSIONID)" +
+                        $"VALUES ('{bet.Id}',{bet.betTypeId},'{string.Join(",", bet.numbers)}','{bet.betAmount}','{bet.sessionId}')";
+                    dbConnection.Execute(query);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<Bet>> GetAllBetsForSession(string sessionId)
+        {
+
+            try
+            {
+                using (IDbConnection dbConnection = Connection)
+                {
+                    return await dbConnection.QueryAsync<Bet>($"SELECT * FROM BET WHERE ID = '{sessionId}'");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

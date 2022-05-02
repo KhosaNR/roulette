@@ -8,12 +8,13 @@ namespace Domain.Entities
 {
     public class Bet
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public int betTypeId {get; set;}
-        public IEnumerable<int> numbers { get; set; }
+        //public IEnumerable<int> numbers { get; set; }
+        public string numbers { get; set; }
         public int betAmount { get; set; }
-        public Guid sessionId { get; set; }
-        //public Guid playerId { get; set; }
+        public string sessionId { get; set; }
+        //public string playerId { get; set; }
         public int payoutAmount { get; set;}
 
     }

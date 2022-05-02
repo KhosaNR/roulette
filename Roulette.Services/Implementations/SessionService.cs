@@ -24,7 +24,7 @@ namespace Roulette.Services.Implementations
             _sessionRepository.AddSession(session);
         }
 
-        public void DeleteSession(Guid SessionId)
+        public void DeleteSession(string SessionId)
         {
             _sessionRepository.DeleteSession(SessionId);
         }
@@ -44,7 +44,7 @@ namespace Roulette.Services.Implementations
             return _sessionRepository.GetDoneSessions();
         }
 
-        public Task<Session> GetSessionByID(Guid SessionId)
+        public Task<Session> GetSessionByID(string SessionId)
         {
             return _sessionRepository.GetSessionByID(SessionId);
         }
@@ -54,14 +54,31 @@ namespace Roulette.Services.Implementations
             _sessionRepository.UpdateSession(session);
         }
 
-        public bool SessionIsAvailableForSpin(string sessionId)
+        //public bool SessionIsAvailableForSpin(string sessionId)
+        //{
+        //    if (!SessionIsAvailableForPlacingBets(sessionId) { return false; }
+        //    if (!SpinHasRelatedBets(sessionId) { return false; }
+        //    return true;
+
+        //}
+
+        public bool SessionIsAvailableForPlacingBets(string sessionId)
         {
-            var session = _sessionRepository.GetSessionByID(Guid.Parse(sessionId));
-            if(session is null) { return false; }
-            if(session.Result is null) { return false; }
+            var session = _sessionRepository.GetSessionByID(sessionId);
+            if (session is null) { return false; }
+            if (session.Result is null) { return false; }
             if (session.Result.hasSpun) { return false; }
             return true;
 
+        }
+
+        public void AddBet(Bet bet)
+        {
+            _sessionRepository.AddBet(bet);
+        }
+        public Task<IEnumerable<Bet>> GetAllBetsForSession(string sessionId)
+        {
+            return _sessionRepository.GetAllBetsForSession(sessionId);
         }
     }
 }

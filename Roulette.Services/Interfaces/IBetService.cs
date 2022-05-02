@@ -9,11 +9,11 @@ namespace Roulette.Services.Interfaces
 {
     public interface IBetService
     {
-        Task<Bet> GetBetById(Guid BetId);
-        Task<Bet> GetBetBySessionId(Guid SessionId);
-        Task<IEnumerable<Bet>> GetAllBetsBySessionId(Guid SessionId);
+        Task<Bet> GetBetById(string BetId);
+        Task<Bet> GetBetBySessionId(string SessionId);
+        Task<IEnumerable<Bet>> GetActiveBetsBySessionId(string SessionId);
         void AddBet(Bet bet);
         void UpdateBet(Bet bet);
-        void DeleteBet(Guid BetId);
+        void DeleteBet(string BetId);
     }
 }

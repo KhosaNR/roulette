@@ -37,7 +37,7 @@ namespace Roulette.DataAccess.Dapper.Implementations
                 {
                     var query = "INSERT INTO BET " +
                         "(ID, BETTYPEID, NUMBERS, BETAMOUNT, SESSIONID)" +
-                        $"VALUES ('{bet.Id.ToString("N")}',{bet.betTypeId},'{bet.numbers}','{bet.betAmount}','{bet.sessionId.ToString("N")}')";
+                        $"VALUES ('{bet.Id}',{bet.betTypeId},'{string.Join(",",bet.numbers)}','{bet.betAmount}','{bet.sessionId}')";
                     dbConnection.Execute(query);
                 }
 
@@ -48,22 +48,25 @@ namespace Roulette.DataAccess.Dapper.Implementations
             }
         }
 
-        public void DeleteBet(Guid BetId)
+        public void DeleteBet(string BetId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Bet>> GetAllBetsBySessionId(Guid SessionId)
+        public async Task<IEnumerable<Bet>> GetActiveBetsBySessionId(string sessionId)
+        {
+            using (IDbConnection dbConnection = Connection)
+            {
+                return await dbConnection.QueryAsync<Bet>($"SELECT * FROM BET INNER JOIN SESSION ON BET.SESSIONID = SESSION.ID WHERE BET.SESSIONID = '{sessionId}' AND SESSION.HASSPUN<>0");
+            }
+        }
+
+        public Task<Bet> GetBetById(string BetId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Bet> GetBetById(Guid BetId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Bet> GetBetBySessionId(Guid SessionId)
+        public Task<Bet> GetBetBySessionId(string SessionId)
         {
             throw new NotImplementedException();
         }

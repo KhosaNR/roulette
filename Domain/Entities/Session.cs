@@ -16,7 +16,7 @@ namespace Domain.Entities
         public int? winningNumber {
             get;private set;
         }
-
+        public ICollection<Bet> bets { get; set; }
         public void SetWinningNumber()
         {
             winningNumber = Utilities.GenerateRandomNumberWithinRange();

@@ -10,12 +10,15 @@ namespace Roulette.Services.Interfaces
     public interface ISessionService
     {
         Task<IEnumerable<Session>> GetAllSessions();
-        Task<Session> GetSessionByID(Guid SessionId);
+        Task<Session> GetSessionByID(string SessionId);
         Task<Session> GetActiveSession();
         Task<IEnumerable<Session>> GetDoneSessions();
         void AddSession(Session session);
         void UpdateSession(Session session);
-        void DeleteSession(Guid SessionId);
-        public bool SessionIsAvailableForSpin(string sessionId);
+        void DeleteSession(string SessionId);
+        //public bool SessionIsAvailableForSpin(string sessionId);
+        public bool SessionIsAvailableForPlacingBets(string sessionId);
+        void AddBet(Bet bet);
+        Task<IEnumerable<Bet>> GetAllBetsForSession(string sessionId);
     }
 }
