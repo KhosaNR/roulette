@@ -13,11 +13,9 @@ namespace Roulette.API.Controllers
     public class SessionController : ControllerBase
     {
         private readonly ISessionService _sessionService;
-        private readonly IBetService _betservice;
-        public SessionController(ISessionService sessionService, IBetService betService)
+        public SessionController(ISessionService sessionService)
         {
             _sessionService = sessionService;
-            _betservice = betService;
         }
 
         
@@ -97,36 +95,19 @@ namespace Roulette.API.Controllers
         {
             if (!_sessionService.SessionIsAvailableForPlacingBets(sessionId))
             {
-                return BadRequest("Session cannot be spun, either sesson is already spun or does not exist.");
+                return BadRequest("Cannot spin, either sesson is already spun or does not exist.");
             }
             var bets = _sessionService.GetAllBetsForSession(sessionId);
-            if (bets is null)
+            if (!bets.Result.Any())
             {
                 return BadRequest("Session has no active bets");
             }
             var session = _sessionService.GetSessionByID(sessionId);
-            /*if(session is null)
-            {
-                return BadRequest("Session already spun");
-            }
-            if (session.Result.hasSpun)
-            {
-                return BadRequest("Session already spun");
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }*/
             session.Result.SetWinningNumber();
             session.Result.hasSpun = true;
             _sessionService.UpdateSession(session.Result);
             return Ok();
         }
-
-        //public bool SesssionHasRelatedBets(string sessionId)
-        //{
-            
-        //}
 
         [HttpPost]
         [Route("s={activeSessionId},bt={ChosenBetTypeId},n={ChosenNumbers},ba={bettingAmount}")]
@@ -137,19 +118,19 @@ namespace Roulette.API.Controllers
 
             if (!_sessionService.SessionIsAvailableForPlacingBets(activeSessionId))
             {
-                return BadRequest("Session cannot be spun.");
+                return BadRequest("Cannot place bet, session cannot accept bets.");
             }
 
             var bet = new Bet
             {
                 Id = Guid.NewGuid().ToString("N"),
                 sessionId = (activeSessionId),
-                betTypeId = ChosenBetTypeId,
-                numbers = ChosenNumbers,
+                BetTypeId = ChosenBetTypeId,
+                Numbers = ChosenNumbers,
                 betAmount = bettingAmount,
                 payoutAmount = 0
             };
-            _betservice.AddBet(bet);
+            _sessionService.AddBet(bet);
             return CreatedAtAction(nameof(GetBetById), new { Id = bet.Id }, bet);
         }
 
@@ -157,7 +138,7 @@ namespace Roulette.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetBetById(string Id)
         {
-            var bet = await _betservice.GetBetById(Id);
+            var bet = await _sessionService.GetBetById(Id);
             return Ok(bet);
         }
     }

@@ -80,5 +80,10 @@ namespace Roulette.Services.Implementations
         {
             return _sessionRepository.GetAllBetsForSession(sessionId);
         }
+
+        public Task<Bet> GetBetById(string Id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

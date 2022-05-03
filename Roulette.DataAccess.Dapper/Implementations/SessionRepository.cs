@@ -149,13 +149,27 @@ namespace Roulette.DataAccess.Dapper.Implementations
             }
         }
 
-        public async Task<Session> GetSessionByID(string SessionId)
+        public async Task<Session> GetSessionByID(string sessionId)
         {
             try
             {
                 using (IDbConnection dbConnection = Connection)
                 {
-                    return await dbConnection.QueryFirstAsync<Session>($"SELECT * FROM SESSION WHERE ID = '{SessionId}'");
+                    var query = $@"
+                                    SELECT s.*, b.*
+                                    FROM Session s
+                                    LEFT JOIN Bet b ON s.Id = b.SessionId                    
+                                    WHERE s.ID = '{sessionId}'
+                                    ";
+                    var session = await dbConnection.QueryAsync<Session,Bet,Session>(query, (s, b) =>
+                    {
+                        if (s.bets == null)
+                            s.bets = new List<Bet>();
+                        s.bets.Add(b);
+                        return s;
+                    }
+                 );
+                    return session.FirstOrDefault();
                 }
 
             }
@@ -193,7 +207,7 @@ namespace Roulette.DataAccess.Dapper.Implementations
                 {
                     var query = "INSERT INTO BET " +
                         "(ID, BETTYPEID, NUMBERS, BETAMOUNT, SESSIONID)" +
-                        $"VALUES ('{bet.Id}',{bet.betTypeId},'{string.Join(",", bet.numbers)}','{bet.betAmount}','{bet.sessionId}')";
+                        $"VALUES ('{bet.Id}',{bet.BetTypeId},'{string.Join(",", bet.Numbers)}','{bet.betAmount}','{bet.sessionId}')";
                     dbConnection.Execute(query);
                 }
 
@@ -219,6 +233,11 @@ namespace Roulette.DataAccess.Dapper.Implementations
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public Task<Bet> GetBetById(string Id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

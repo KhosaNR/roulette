@@ -32,8 +32,6 @@ namespace Roulette.API
         {
 
             services.AddControllers();
-            services.AddScoped<IBetService,BetService>();
-            services.AddScoped<IBetRepository, BetRepository>();
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddSwaggerGen(c =>

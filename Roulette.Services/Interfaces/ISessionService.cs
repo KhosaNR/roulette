@@ -20,5 +20,6 @@ namespace Roulette.Services.Interfaces
         public bool SessionIsAvailableForPlacingBets(string sessionId);
         void AddBet(Bet bet);
         Task<IEnumerable<Bet>> GetAllBetsForSession(string sessionId);
+        Task<Bet> GetBetById(string Id);
     }
 }
