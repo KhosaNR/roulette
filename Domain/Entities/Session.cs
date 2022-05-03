@@ -12,14 +12,14 @@ namespace Domain.Entities
     {
         public string Id { get; set; }
         //public IEnumerable<Bet> bets { get; set; }
-        public bool hasSpun {get; set;}
-        public int? winningNumber {
+        public bool HasSpun {get; set;}
+        public int? WinningNumber {
             get;private set;
         }
-        public ICollection<Bet> bets { get; set; }
+        public ICollection<Bet> Bets { get; set; }
         public void SetWinningNumber()
         {
-            winningNumber = Utilities.GenerateRandomNumberWithinRange();
+            WinningNumber = Utilities.GenerateRandomNumberWithinRange();
         }
     }
 }

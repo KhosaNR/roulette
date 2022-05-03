@@ -54,20 +54,12 @@ namespace Roulette.Services.Implementations
             _sessionRepository.UpdateSession(session);
         }
 
-        //public bool SessionIsAvailableForSpin(string sessionId)
-        //{
-        //    if (!SessionIsAvailableForPlacingBets(sessionId) { return false; }
-        //    if (!SpinHasRelatedBets(sessionId) { return false; }
-        //    return true;
-
-        //}
-
         public bool SessionIsAvailableForPlacingBets(string sessionId)
         {
             var session = _sessionRepository.GetSessionByID(sessionId);
             if (session is null) { return false; }
             if (session.Result is null) { return false; }
-            if (session.Result.hasSpun) { return false; }
+            if (session.Result.HasSpun) { return false; }
             return true;
 
         }

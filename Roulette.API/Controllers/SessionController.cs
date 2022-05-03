@@ -45,7 +45,6 @@ namespace Roulette.API.Controllers
         }
         
         [HttpPost]
-        //[Route("new")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult CreateSession()
@@ -59,7 +58,7 @@ namespace Roulette.API.Controllers
             var activeSession = new Session
             {
                 Id = sessionstring,
-                hasSpun = false
+                HasSpun = false
             };
             _sessionService.AddSession(activeSession);
             return CreatedAtAction(nameof(GetSessionByID), new { Id = activeSession.Id }, activeSession);
@@ -77,12 +76,12 @@ namespace Roulette.API.Controllers
             {
                 return BadRequest();
             }
-            if (session.hasSpun)
+            if (session.HasSpun)
             {
                 return BadRequest("Session already spun");
             }
             session.SetWinningNumber();
-            session.hasSpun = true;
+            session.HasSpun = true;
             _sessionService.UpdateSession(session);
             return Ok();
         }
@@ -104,7 +103,7 @@ namespace Roulette.API.Controllers
             }
             var session = _sessionService.GetSessionByID(sessionId);
             session.Result.SetWinningNumber();
-            session.Result.hasSpun = true;
+            session.Result.HasSpun = true;
             _sessionService.UpdateSession(session.Result);
             return Ok();
         }
@@ -124,11 +123,11 @@ namespace Roulette.API.Controllers
             var bet = new Bet
             {
                 Id = Guid.NewGuid().ToString("N"),
-                sessionId = (activeSessionId),
+                SessionId = (activeSessionId),
                 BetTypeId = ChosenBetTypeId,
                 Numbers = ChosenNumbers,
-                betAmount = bettingAmount,
-                payoutAmount = 0
+                BetAmount = bettingAmount,
+                PayoutAmount = 0
             };
             _sessionService.AddBet(bet);
             return CreatedAtAction(nameof(GetBetById), new { Id = bet.Id }, bet);

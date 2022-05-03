@@ -9,6 +9,6 @@ namespace Domain.Entities
     public class Player
     {
         public string Id { get; set; }
-        public string displayName { get; set; }
+        public string DisplayName { get; set; }
     }
 }

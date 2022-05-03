@@ -34,9 +34,8 @@ namespace Roulette.DataAccess.Dapper.Implementations
             {
                 using (IDbConnection dbConnection = Connection)
                 {
-                    //dbConnection.Open();
                     var query = $"INSERT INTO SESSION (Id, hasSpun, winningNumber) " +
-                        $"VALUES ('{session.Id}',{session.hasSpun},'{session.winningNumber}')";
+                        $"VALUES ('{session.Id}',{session.HasSpun},'{session.WinningNumber}')";
                     dbConnection.Execute(query);
                 }
 
@@ -88,8 +87,6 @@ namespace Roulette.DataAccess.Dapper.Implementations
             {
                 using (IDbConnection dbConnection = Connection)
                 {
-                    //var query = "SELECT * FROM SESSION LEFT JOIN BET ON SESSION.ID = BET.SESSIONID";
-                    //return await dbConnection.QueryAsync<Session>("SELECT * FROM SESSION LEFT JOIN BET ON SESSION.ID = BET.SESSIONID");
                     var lookup = new Dictionary<string, Session>();
                     return await dbConnection.QueryAsync<Session, Bet, Session>(@"
                                     SELECT s.*, b.*
@@ -101,9 +98,9 @@ namespace Roulette.DataAccess.Dapper.Implementations
                         {
                             lookup.Add(s.Id, session = s);
                         }
-                        if (session.bets == null)
-                            session.bets = new List<Bet>();
-                            session.bets.Add(b);
+                        if (session.Bets == null)
+                            session.Bets = new List<Bet>();
+                            session.Bets.Add(b);
                         return session;
 }
                  );
@@ -134,9 +131,9 @@ namespace Roulette.DataAccess.Dapper.Implementations
                         {
                             lookup.Add(s.Id, session = s);
                         }
-                        if (session.bets == null)
-                            session.bets = new List<Bet>();
-                        session.bets.Add(b);
+                        if (session.Bets == null)
+                            session.Bets = new List<Bet>();
+                        session.Bets.Add(b);
                         return session;
                     }
                  );
@@ -163,9 +160,9 @@ namespace Roulette.DataAccess.Dapper.Implementations
                                     ";
                     var session = await dbConnection.QueryAsync<Session,Bet,Session>(query, (s, b) =>
                     {
-                        if (s.bets == null)
-                            s.bets = new List<Bet>();
-                        s.bets.Add(b);
+                        if (s.Bets == null)
+                            s.Bets = new List<Bet>();
+                        s.Bets.Add(b);
                         return s;
                     }
                  );
@@ -186,7 +183,7 @@ namespace Roulette.DataAccess.Dapper.Implementations
             {
                 using (IDbConnection dbConnection = Connection)
                 {
-                    var sqlCommand = $"UPDATE SESSION SET HasSpun = {session.hasSpun}, WinningNUmber = {session.winningNumber} " +
+                    var sqlCommand = $"UPDATE SESSION SET HasSpun = {session.HasSpun}, WinningNUmber = {session.WinningNumber} " +
                         $"WHERE ID = '{session.Id}'";
                     dbConnection.Execute(sqlCommand);
                 }
@@ -207,7 +204,7 @@ namespace Roulette.DataAccess.Dapper.Implementations
                 {
                     var query = "INSERT INTO BET " +
                         "(ID, BETTYPEID, NUMBERS, BETAMOUNT, SESSIONID)" +
-                        $"VALUES ('{bet.Id}',{bet.BetTypeId},'{string.Join(",", bet.Numbers)}','{bet.betAmount}','{bet.sessionId}')";
+                        $"VALUES ('{bet.Id}',{bet.BetTypeId},'{string.Join(",", bet.Numbers)}','{bet.BetAmount}','{bet.SessionId}')";
                     dbConnection.Execute(query);
                 }
 

@@ -12,10 +12,10 @@ namespace Domain.Entities
         public int BetTypeId {get; set;}
         //public IEnumerable<int> numbers { get; set; }
         public string Numbers { get; set; }
-        public int betAmount { get; set; }
-        public string sessionId { get; set; }
+        public int BetAmount { get; set; }
+        public string SessionId { get; set; }
         //public string playerId { get; set; }
-        public int payoutAmount { get; set;}
+        public int PayoutAmount { get; set;}
 
     }
 }
